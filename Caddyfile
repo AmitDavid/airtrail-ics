@@ -1,0 +1,15 @@
+{$CALENDAR_DOMAIN} {
+	@calendar {
+		method GET HEAD
+		path /{$CALENDAR_TOKEN}.ics
+	}
+
+	handle @calendar {
+		rewrite * /calendar.ics
+		reverse_proxy airtrail-ics:8080
+	}
+
+	handle {
+		respond "Not Found" 404
+	}
+}

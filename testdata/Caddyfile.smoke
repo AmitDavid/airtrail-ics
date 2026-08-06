@@ -1,0 +1,15 @@
+:8081 {
+	@calendar {
+		method GET HEAD
+		path /test-token.ics
+	}
+
+	handle @calendar {
+		rewrite * /calendar.ics
+		reverse_proxy airtrail-ics:8080
+	}
+
+	handle {
+		respond "Not Found" 404
+	}
+}

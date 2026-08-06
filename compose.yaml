@@ -1,0 +1,63 @@
+services:
+  airtrail-ics:
+    image: "${AIRTRAIL_ICS_IMAGE:?Set AIRTRAIL_ICS_IMAGE in .env}"
+    restart: unless-stopped
+    environment:
+      AIRTRAIL_URL: "${AIRTRAIL_URL:?Set AIRTRAIL_URL in .env}"
+      AIRTRAIL_API_KEY: "${AIRTRAIL_API_KEY:?Set AIRTRAIL_API_KEY in .env}"
+      AIRTRAIL_SCOPE: "${AIRTRAIL_SCOPE:-mine}"
+      AIRTRAIL_USER_ID: "${AIRTRAIL_USER_ID:-}"
+      CALENDAR_NAME: "${CALENDAR_NAME:-AirTrail Flights}"
+      SYNC_CRON: "${SYNC_CRON:-0 */6 * * *}"
+      SYNC_TIMEZONE: "${SYNC_TIMEZONE:-UTC}"
+      SYNC_RETRY_COUNT: "${SYNC_RETRY_COUNT:-3}"
+      HTTP_TIMEOUT: "${HTTP_TIMEOUT:-30s}"
+    expose:
+      - "8080"
+    ports:
+      - "${AIRTRAIL_ICS_BIND:-127.0.0.1}:${AIRTRAIL_ICS_PORT:-18080}:8080"
+    volumes:
+      - airtrail-data:/data
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - backend
+      - egress
+
+  caddy:
+    image: caddy:2.10.2-alpine
+    profiles:
+      - caddy
+    restart: unless-stopped
+    depends_on:
+      - airtrail-ics
+    environment:
+      CALENDAR_DOMAIN: "${CALENDAR_DOMAIN:-}"
+      CALENDAR_TOKEN: "${CALENDAR_TOKEN:-}"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - frontend
+      - backend
+
+volumes:
+  airtrail-data:
+  caddy-data:
+  caddy-config:
+
+networks:
+  frontend:
+  backend:
+    internal: true
+  egress:
