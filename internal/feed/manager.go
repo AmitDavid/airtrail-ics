@@ -319,14 +319,14 @@ func toCandidate(flight airtrail.Flight) (candidate, string) {
 	}
 
 	departureScheduled, hasDepartureScheduled := nonEmpty(flight.DepartureScheduled)
-	landingScheduled, hasLandingScheduled := nonEmpty(flight.LandingScheduled)
+	arrivalScheduled, hasArrivalScheduled := nonEmpty(flight.ArrivalScheduled)
 
 	var startValue, endValue, startLabel, endLabel string
-	if hasDepartureScheduled && hasLandingScheduled {
+	if hasDepartureScheduled && hasArrivalScheduled {
 		startValue = departureScheduled
-		endValue = landingScheduled
+		endValue = arrivalScheduled
 		startLabel = "scheduled departure"
-		endLabel = "scheduled landing"
+		endLabel = "scheduled arrival"
 	} else {
 		departure, hasDeparture := nonEmpty(flight.Departure)
 		arrival, hasArrival := nonEmpty(flight.Arrival)

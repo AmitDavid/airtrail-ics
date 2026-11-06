@@ -6,7 +6,7 @@
 
 The service requests `GET /api/flight/list` with an AirTrail API key. A flight becomes an event when it has valid origin and destination IATA codes, valid airport IANA timezones, and one complete time pair.
 
-The service prefers `departureScheduled` plus `landingScheduled` when both values exist. Otherwise, it uses the canonical `departure` plus `arrival` pair from AirTrail; it never mixes values from different pairs. Flights with missing or malformed required data are skipped and logged.
+The service prefers the scheduled airport-time pair, `departureScheduled` plus `arrivalScheduled`, when both values exist. Otherwise, it uses the canonical `departure` plus `arrival` pair from AirTrail; it never mixes values from different pairs. Flights with missing or malformed required data are skipped and logged.
 
 Event summaries are exactly `XXX -> YYY`. AirTrail stores timestamps as instants but displays them in each airport local timezone. The feed follows that display model: departure and arrival are converted to their respective airport-local wall clocks and emitted as floating iCalendar times, preventing the calendar account timezone from shifting them.
 

@@ -26,7 +26,7 @@ type Flight struct {
 	Departure          *string  `json:"departure"`
 	Arrival            *string  `json:"arrival"`
 	DepartureScheduled *string  `json:"departureScheduled"`
-	LandingScheduled   *string  `json:"landingScheduled"`
+	ArrivalScheduled   *string  `json:"arrivalScheduled"`
 }
 
 type listResponse struct {
